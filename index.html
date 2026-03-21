@@ -10,179 +10,388 @@
 
     body {
       min-height: 100vh;
+      background: #e2e2de;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 1rem 4rem;
+      gap: 1.25rem;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    .page-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #888;
+    }
+
+    /* ── Name input ──────────────────────────────────────────────────────── */
+    .name-field {
+      width: 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .name-field label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #777;
+    }
+
+    .name-field input {
+      width: 100%;
+      padding: 0.6rem 0.85rem;
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: white;
+      color: #1a1a1a;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .name-field input:focus { border-color: #777; }
+    .name-field input.invalid { border-color: #e05; }
+
+    /* ── Paper wrap (no gap between tears and paper) ────────────────────── */
+    .paper-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Paper tear (top) ────────────────────────────────────────────────── */
+    .tear-top {
+      width: 260px;
+      height: 12px;
+      background-color: white;
+      background-image:
+        linear-gradient(135deg, #e2e2de 25%, transparent 25%),
+        linear-gradient(225deg, #e2e2de 25%, transparent 25%);
+      background-size: 12px 12px;
+      background-repeat: repeat-x;
+      background-position: 0 0;
+    }
+
+    /* ── Paper ───────────────────────────────────────────────────────────── */
+    .paper {
+      width: 260px;
+      background: white;
+      padding: 0.6rem 0.75rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Receipt header ──────────────────────────────────────────────────── */
+    .receipt-header {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 11.5px;
+      color: #111;
+    }
+
+    .receipt-rule {
+      border: none;
+      border-top: 1px dashed #bbb;
+      margin: 5px 0;
+    }
+
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      min-height: 17px;
+      padding: 1px 0;
+    }
+
+    .receipt-name {
+      font-weight: 700;
+      font-size: 12.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 55%;
+    }
+
+    .receipt-time {
+      font-size: 10.5px;
+      color: #444;
+      white-space: nowrap;
+    }
+
+    .receipt-date {
+      text-align: center;
+      font-size: 10.5px;
+      color: #666;
+      padding-bottom: 1px;
+    }
+
+    /* ── Message area ────────────────────────────────────────────────────── */
+    .paper-message {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12px;
+      line-height: 1.65;
+      color: #111;
+      border: none;
+      outline: none;
+      resize: none;
+      width: 100%;
+      min-height: 96px;
+      padding: 8px 0 4px;
+      background: transparent;
+      overflow: hidden;
+    }
+
+    .paper-message::placeholder { color: #ccc; }
+
+    /* ── Paper image ─────────────────────────────────────────────────────── */
+    .paper-image-wrap {
+      display: none;
+      width: 100%;
+      margin: 6px 0 4px;
+      position: relative;
+    }
+
+    .paper-image-wrap.visible { display: block; }
+
+    .paper-image-wrap img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(100%) contrast(1.1);
+    }
+
+    .remove-image {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 22px;
+      height: 22px;
+      background: rgba(0,0,0,0.55);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 12px;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #f5f5f0;
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      padding: 1rem;
+      line-height: 1;
     }
 
-    .card {
-      background: white;
-      border-radius: 16px;
-      padding: 2.5rem 2rem;
-      max-width: 480px;
+    /* ── Camera trigger button ───────────────────────────────────────────── */
+    .camera-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
       width: 100%;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    }
-
-    .receipt-icon {
-      font-size: 2.5rem;
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      text-align: center;
-      color: #1a1a1a;
-      margin-bottom: 0.4rem;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #777;
-      font-size: 0.92rem;
-      margin-bottom: 2rem;
-    }
-
-    label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #444;
-      margin-bottom: 0.4rem;
-    }
-
-    input[type="text"],
-    textarea {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-family: inherit;
-      color: #1a1a1a;
-      background: #fafafa;
-      transition: border-color 0.2s;
-      resize: vertical;
-      margin-bottom: 1.2rem;
-    }
-
-    input[type="text"]:focus,
-    textarea:focus {
-      outline: none;
-      border-color: #555;
-      background: white;
-    }
-
-    textarea {
-      min-height: 120px;
-    }
-
-    .char-count {
-      font-size: 0.78rem;
+      padding: 6px;
+      background: none;
+      border: 1px dashed #ccc;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
       color: #aaa;
-      text-align: right;
-      margin-top: -1rem;
-      margin-bottom: 1.2rem;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: border-color 0.15s, color 0.15s;
     }
 
-    button {
-      width: 100%;
-      padding: 0.85rem;
+    .camera-btn:hover { border-color: #999; color: #555; }
+    .camera-btn.hidden { display: none; }
+
+    /* ── Paper tear (bottom) ─────────────────────────────────────────────── */
+    .tear-bottom {
+      width: 260px;
+      height: 12px;
+      background-color: white;
+      background-image:
+        linear-gradient( 45deg, #e2e2de 25%, transparent 25%),
+        linear-gradient(-45deg, #e2e2de 25%, transparent 25%);
+      background-size: 12px 12px;
+      background-repeat: repeat-x;
+      background-position: 0 0;
+    }
+
+    /* ── Send button ─────────────────────────────────────────────────────── */
+    .send-btn {
+      width: 260px;
+      padding: 0.8rem;
       background: #1a1a1a;
       color: white;
       border: none;
       border-radius: 10px;
-      font-size: 1rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      margin-top: 0.25rem;
+    }
+
+    .send-btn:hover { background: #333; }
+    .send-btn:active { transform: scale(0.98); }
+    .send-btn:disabled { background: #aaa; cursor: not-allowed; }
+
+    /* ── Status ──────────────────────────────────────────────────────────── */
+    .status {
+      font-size: 0.85rem;
+      text-align: center;
+      min-height: 1.2em;
+      color: transparent;
+    }
+
+    .status.success { color: #2a7a4a; }
+    .status.error   { color: #c0392b; }
+    .status.sending { color: #555; }
+
+    /* ── Camera modal ────────────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      gap: 1.25rem;
+      padding: 1rem;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .camera-viewport {
+      position: relative;
+      width: min(320px, 90vw);
+      height: min(320px, 90vw);
+      overflow: hidden;
+      border-radius: 4px;
+    }
+
+    #cameraFeed {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Darken outside the square crop area */
+    .crop-shade {
+      position: absolute;
+      inset: 0;
+      border: none;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.7);
+      pointer-events: none;
+    }
+
+    .modal-hint {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .modal-btn {
+      padding: 0.65rem 1.75rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+      font-family: inherit;
     }
 
-    button:hover { background: #333; }
-    button:active { transform: scale(0.98); }
-    button:disabled { background: #aaa; cursor: not-allowed; }
+    .modal-btn.capture { background: white; color: #1a1a1a; }
+    .modal-btn.cancel  { background: rgba(255,255,255,0.12); color: white; }
 
-    .status {
-      margin-top: 1.2rem;
-      padding: 0.75rem 1rem;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      text-align: center;
-      display: none;
-    }
-
-    .status.success {
-      background: #edfaf4;
-      color: #1a7a4a;
-      border: 1px solid #b2e8ce;
-      display: block;
-    }
-
-    .status.error {
-      background: #fff0f0;
-      color: #c0392b;
-      border: 1px solid #f5c6c6;
-      display: block;
-    }
-
-    .status.sending {
-      background: #f0f4ff;
-      color: #3a5bd9;
-      border: 1px solid #c5d0f5;
-      display: block;
-    }
-
-    .divider {
-      border: none;
-      border-top: 1px dashed #e0e0e0;
-      margin: 1.5rem 0;
-    }
-
-    .footer {
-      font-size: 0.75rem;
-      color: #bbb;
-      text-align: center;
-    }
-
-    .status.queued {
-      background: #fffbea;
-      color: #7a5c00;
-      border: 1px solid #f0d060;
-      display: block;
-    }
+    /* hidden canvas for capture */
+    #captureCanvas { display: none; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="receipt-icon">🧾</div>
-    <h1>Send a Message</h1>
-    <p class="subtitle">Your message will be printed on a receipt.</p>
 
-    <form id="messageForm">
-      <label for="name">Your name (optional)</label>
-      <input type="text" id="name" name="name" placeholder="Anonymous" maxlength="40" />
+  <p class="page-title">Send a Message</p>
 
-      <label for="message">Message</label>
-      <textarea id="message" name="message" placeholder="Write something..." maxlength="280" required></textarea>
-      <div class="char-count"><span id="charCount">0</span> / 280</div>
-
-      <button type="submit" id="submitBtn">Send to Printer</button>
-    </form>
-
-    <div class="status" id="status"></div>
-
-    <hr class="divider" />
-    <p class="footer">Messages are printed immediately. Be kind.</p>
+  <!-- Name -->
+  <div class="name-field">
+    <label for="nameInput">Your name</label>
+    <input type="text" id="nameInput" placeholder="Required" maxlength="28" autocomplete="off" spellcheck="false" />
   </div>
 
+  <!-- Paper -->
+  <div class="paper-wrap">
+  <div class="tear-top"></div>
+  <div class="paper">
+
+    <!-- Receipt header (live) -->
+    <div class="receipt-header">
+      <hr class="receipt-rule" />
+      <div class="receipt-row">
+        <span class="receipt-name" id="paperName">&nbsp;</span>
+        <span class="receipt-date" id="paperDate">&nbsp;</span>
+      </div>
+      <hr class="receipt-rule" />
+    </div>
+
+    <!-- Message -->
+    <textarea class="paper-message" id="messageInput"
+      placeholder="Write your message here..."
+      maxlength="600"
+      spellcheck="true"
+    ></textarea>
+
+    <!-- Captured image -->
+    <div class="paper-image-wrap" id="imageWrap">
+      <img id="paperImage" alt="" />
+      <button class="remove-image" id="removeImage" title="Remove photo">✕</button>
+    </div>
+
+    <!-- Camera button -->
+    <button class="camera-btn" id="cameraBtn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      Add a photo
+    </button>
+
+  </div>
+  <div class="tear-bottom"></div>
+  </div>
+
+  <!-- Send -->
+  <button class="send-btn" id="sendBtn">Send to Printer</button>
+  <div class="status" id="statusEl"></div>
+
+  <!-- Camera modal -->
+  <div class="modal-overlay" id="cameraModal">
+    <div class="camera-viewport">
+      <video id="cameraFeed" autoplay playsinline muted></video>
+      <div class="crop-shade"></div>
+    </div>
+    <p class="modal-hint">Your photo will be square-cropped and printed in greyscale.</p>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="cancelBtn">Cancel</button>
+      <button class="modal-btn capture" id="captureBtn">Use Photo</button>
+    </div>
+  </div>
+
+  <canvas id="captureCanvas"></canvas>
+
   <script>
-    // ── CONFIG ──────────────────────────────────────────────────────────────
-    // Get these from your Supabase project: Settings → API
+    // ── CONFIG ───────────────────────────────────────────────────────────────
     const SUPABASE_URL  = 'https://mgetsvjjbxpqbkawexgz.supabase.co';
     const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1nZXRzdmpqYnhwcWJrYXdleGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwODUyMzIsImV4cCI6MjA4OTY2MTIzMn0.X1uHqnB34QhtrFdUrOj7AZKvFbyjBk2wzpsKLv6KtC0';
     // ────────────────────────────────────────────────────────────────────────
@@ -190,25 +399,138 @@
     const { createClient } = supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    const form      = document.getElementById('messageForm');
-    const messageEl = document.getElementById('message');
-    const charCount = document.getElementById('charCount');
-    const submitBtn = document.getElementById('submitBtn');
-    const statusEl  = document.getElementById('status');
+    // Elements
+    const nameInput   = document.getElementById('nameInput');
+    const messageInput= document.getElementById('messageInput');
+    const paperName   = document.getElementById('paperName');
+    const paperTime   = document.getElementById('paperTime');
+    const paperDate   = document.getElementById('paperDate');
+    const imageWrap   = document.getElementById('imageWrap');
+    const paperImage  = document.getElementById('paperImage');
+    const removeImage = document.getElementById('removeImage');
+    const cameraBtn   = document.getElementById('cameraBtn');
+    const cameraModal = document.getElementById('cameraModal');
+    const cameraFeed  = document.getElementById('cameraFeed');
+    const cancelBtn   = document.getElementById('cancelBtn');
+    const captureBtn  = document.getElementById('captureBtn');
+    const captureCanvas = document.getElementById('captureCanvas');
+    const sendBtn     = document.getElementById('sendBtn');
+    const statusEl    = document.getElementById('statusEl');
 
-    messageEl.addEventListener('input', () => {
-      charCount.textContent = messageEl.value.length;
+    // ── Header: live timestamp ───────────────────────────────────────────────
+    function getIST() {
+      const now = new Date();
+      // Use Intl to get IST date/time reliably
+      const fmt = (opts) => new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', ...opts }).format(now);
+      const hh   = fmt({ hour: '2-digit', hour12: false });
+      const mm   = fmt({ minute: '2-digit' });
+      const day  = fmt({ day: '2-digit' });
+      const mon  = fmt({ month: 'short' });
+      const yr   = fmt({ year: 'numeric' });
+      return {
+        time: `${hh}:${mm} UTC+5:30`,
+        date: `${day} ${mon} ${yr}`,
+      };
+    }
+
+    function updateHeader() {
+      const name = nameInput.value.trim();
+      if (name) {
+        const { date } = getIST();
+        paperName.textContent = name;
+        paperDate.textContent = date;
+      } else {
+        paperName.textContent = '\u00A0';
+        paperDate.textContent = '\u00A0';
+      }
+    }
+
+    nameInput.addEventListener('input', () => {
+      nameInput.classList.remove('invalid');
+      updateHeader();
     });
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    setInterval(updateHeader, 30000); // refresh time every 30s while typing
+    updateHeader();
 
-      const name    = document.getElementById('name').value.trim() || 'Anonymous';
-      const message = messageEl.value.trim();
-      if (!message) return;
+    // ── Auto-grow textarea ───────────────────────────────────────────────────
+    messageInput.addEventListener('input', () => {
+      messageInput.style.height = 'auto';
+      messageInput.style.height = messageInput.scrollHeight + 'px';
+    });
 
-      submitBtn.disabled = true;
-      showStatus('sending', 'Sending...');
+    // ── Camera ───────────────────────────────────────────────────────────────
+    let stream = null;
+
+    cameraBtn.addEventListener('click', async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment', width: { ideal: 1080 }, height: { ideal: 1080 } },
+        });
+        cameraFeed.srcObject = stream;
+        cameraModal.classList.add('open');
+      } catch (err) {
+        // fall back to any camera
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          cameraFeed.srcObject = stream;
+          cameraModal.classList.add('open');
+        } catch {
+          alert('Camera access denied or unavailable.');
+        }
+      }
+    });
+
+    function stopCamera() {
+      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+      cameraModal.classList.remove('open');
+    }
+
+    cancelBtn.addEventListener('click', stopCamera);
+
+    captureBtn.addEventListener('click', () => {
+      const vw = cameraFeed.videoWidth;
+      const vh = cameraFeed.videoHeight;
+      const size = Math.min(vw, vh);
+      const sx = (vw - size) / 2;
+      const sy = (vh - size) / 2;
+
+      captureCanvas.width  = size;
+      captureCanvas.height = size;
+      const ctx = captureCanvas.getContext('2d');
+      ctx.drawImage(cameraFeed, sx, sy, size, size, 0, 0, size, size);
+
+      paperImage.src = captureCanvas.toDataURL('image/jpeg', 0.85);
+      imageWrap.classList.add('visible');
+      cameraBtn.classList.add('hidden');
+      stopCamera();
+    });
+
+    removeImage.addEventListener('click', () => {
+      imageWrap.classList.remove('visible');
+      paperImage.src = '';
+      cameraBtn.classList.remove('hidden');
+    });
+
+    // ── Send ─────────────────────────────────────────────────────────────────
+    sendBtn.addEventListener('click', async () => {
+      const name    = nameInput.value.trim();
+      const message = messageInput.value.trim();
+
+      if (!name) {
+        nameInput.classList.add('invalid');
+        nameInput.focus();
+        showStatus('error', 'Please enter your name.');
+        return;
+      }
+      if (!message) {
+        messageInput.focus();
+        showStatus('error', 'Please write a message.');
+        return;
+      }
+
+      sendBtn.disabled = true;
+      showStatus('sending', 'Sending…');
 
       const { error } = await db.from('messages').insert({ name, message });
 
@@ -216,16 +538,21 @@
         showStatus('error', 'Something went wrong. Please try again.');
         console.error(error);
       } else {
-        showStatus('success', 'Message sent! It will print shortly.');
-        form.reset();
-        charCount.textContent = '0';
+        showStatus('success', 'Sent! Your message will print shortly.');
+        nameInput.value = '';
+        messageInput.value = '';
+        messageInput.style.height = 'auto';
+        imageWrap.classList.remove('visible');
+        paperImage.src = '';
+        cameraBtn.classList.remove('hidden');
+        updateHeader();
       }
 
-      submitBtn.disabled = false;
+      sendBtn.disabled = false;
     });
 
     function showStatus(type, msg) {
-      statusEl.className = type ? `status ${type}` : 'status';
+      statusEl.className = `status ${type}`;
       statusEl.textContent = msg;
     }
   </script>
