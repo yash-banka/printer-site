@@ -192,7 +192,7 @@
       aspect-ratio: 1 / 1;
       object-fit: cover;
       display: block;
-      filter: grayscale(100%) contrast(1.1);
+      filter: contrast(1.05);
     }
 
     .remove-image {
@@ -336,9 +336,57 @@
     .modal-btn.cancel  { background: transparent; color: white; }
 
     #captureCanvas { display: none; }
+
+    /* ── Sent receipt view ───────────────────────────────────────────────── */
+    #sentView { display: none; flex-direction: column; align-items: center; gap: 1.5rem; }
+    #sentView.visible { display: flex; }
+
+    .sent-message-text {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12px;
+      line-height: 1.65;
+      color: #1a1c2c;
+      width: 100%;
+      padding: 8px 0 4px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .sent-image-wrap { display: none; width: 100%; margin: 6px 0 4px; }
+    .sent-image-wrap.visible { display: block; }
+    .sent-image-wrap img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(1) contrast(1.1);
+    }
+
+    .receipt-footer-rule { border: none; border-top: 2px dashed #888; margin: 8px 0 4px; }
+
+    .send-another-btn {
+      width: 280px;
+      padding: 1rem;
+      background: transparent;
+      color: #f0ece0;
+      border: 3px solid #f0ece0;
+      border-radius: 0;
+      font-size: 0.5rem;
+      font-family: 'Press Start 2P', monospace;
+      cursor: pointer;
+      box-shadow: 5px 5px 0 #000;
+      letter-spacing: 0.05em;
+      transition: transform 0.05s, box-shadow 0.05s;
+    }
+
+    .send-another-btn:hover { background: rgba(240,236,224,0.1); }
+    .send-another-btn:active { transform: translate(5px,5px); box-shadow: 0 0 0 #000; }
   </style>
 </head>
 <body>
+
+  <!-- Input view -->
+  <div id="inputView" style="display:contents">
 
   <p class="page-title">★ Send a Message ★</p>
 
@@ -393,6 +441,33 @@
   <button class="send-btn" id="sendBtn">▶ Send to Printer</button>
   <div class="status" id="statusEl"></div>
 
+  </div><!-- /inputView -->
+
+  <!-- Sent receipt view -->
+  <div id="sentView">
+    <p class="page-title">★ Message Sent ★</p>
+    <div class="paper-wrap">
+      <div class="tear-top"></div>
+      <div class="paper">
+        <div class="receipt-header">
+          <hr class="receipt-rule" />
+          <div class="receipt-row">
+            <span class="receipt-name" id="sentName"></span>
+            <span class="receipt-date" id="sentDate"></span>
+          </div>
+          <hr class="receipt-rule" />
+        </div>
+        <div class="sent-message-text" id="sentMessage"></div>
+        <div class="sent-image-wrap" id="sentImageWrap">
+          <img id="sentImage" alt="" />
+        </div>
+        <hr class="receipt-footer-rule" />
+      </div>
+      <div class="tear-bottom"></div>
+    </div>
+    <button class="send-another-btn" id="sendAnotherBtn">↩ Send Another</button>
+  </div>
+
   <!-- Camera modal -->
   <div class="modal-overlay" id="cameraModal">
     <div class="camera-viewport">
@@ -418,37 +493,38 @@
     const db = createClient(SUPABASE_URL, SUPABASE_ANON);
 
     // Elements
-    const nameInput   = document.getElementById('nameInput');
-    const messageInput= document.getElementById('messageInput');
-    const paperName   = document.getElementById('paperName');
-    const paperTime   = document.getElementById('paperTime');
-    const paperDate   = document.getElementById('paperDate');
-    const imageWrap   = document.getElementById('imageWrap');
-    const paperImage  = document.getElementById('paperImage');
-    const removeImage = document.getElementById('removeImage');
-    const cameraBtn   = document.getElementById('cameraBtn');
-    const cameraModal = document.getElementById('cameraModal');
-    const cameraFeed  = document.getElementById('cameraFeed');
-    const cancelBtn   = document.getElementById('cancelBtn');
-    const captureBtn  = document.getElementById('captureBtn');
+    const nameInput     = document.getElementById('nameInput');
+    const messageInput  = document.getElementById('messageInput');
+    const paperName     = document.getElementById('paperName');
+    const paperDate     = document.getElementById('paperDate');
+    const imageWrap     = document.getElementById('imageWrap');
+    const paperImage    = document.getElementById('paperImage');
+    const removeImage   = document.getElementById('removeImage');
+    const cameraBtn     = document.getElementById('cameraBtn');
+    const cameraModal   = document.getElementById('cameraModal');
+    const cameraFeed    = document.getElementById('cameraFeed');
+    const cancelBtn     = document.getElementById('cancelBtn');
+    const captureBtn    = document.getElementById('captureBtn');
     const captureCanvas = document.getElementById('captureCanvas');
-    const sendBtn     = document.getElementById('sendBtn');
-    const statusEl    = document.getElementById('statusEl');
+    const sendBtn       = document.getElementById('sendBtn');
+    const statusEl      = document.getElementById('statusEl');
+    const inputView     = document.getElementById('inputView');
+    const sentView      = document.getElementById('sentView');
+    const sentName      = document.getElementById('sentName');
+    const sentDate      = document.getElementById('sentDate');
+    const sentMessage   = document.getElementById('sentMessage');
+    const sentImageWrap = document.getElementById('sentImageWrap');
+    const sentImage     = document.getElementById('sentImage');
+    const sendAnotherBtn= document.getElementById('sendAnotherBtn');
 
     // ── Header: live timestamp ───────────────────────────────────────────────
     function getIST() {
       const now = new Date();
-      // Use Intl to get IST date/time reliably
       const fmt = (opts) => new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', ...opts }).format(now);
-      const hh   = fmt({ hour: '2-digit', hour12: false });
-      const mm   = fmt({ minute: '2-digit' });
       const day  = fmt({ day: '2-digit' });
       const mon  = fmt({ month: 'short' });
       const yr   = fmt({ year: 'numeric' });
-      return {
-        time: `${hh}:${mm} UTC+5:30`,
-        date: `${day} ${mon} ${yr}`,
-      };
+      return { date: `${day} ${mon} ${yr}` };
     }
 
     function updateHeader() {
@@ -468,7 +544,7 @@
       updateHeader();
     });
 
-    setInterval(updateHeader, 30000); // refresh time every 30s while typing
+    setInterval(updateHeader, 30000);
     updateHeader();
 
     // ── Auto-grow textarea ───────────────────────────────────────────────────
@@ -488,7 +564,6 @@
         cameraFeed.srcObject = stream;
         cameraModal.classList.add('open');
       } catch (err) {
-        // fall back to any camera
         try {
           stream = await navigator.mediaDevices.getUserMedia({ video: true });
           cameraFeed.srcObject = stream;
@@ -513,12 +588,23 @@
       const sx = (vw - size) / 2;
       const sy = (vh - size) / 2;
 
-      captureCanvas.width  = size;
-      captureCanvas.height = size;
+      // Target: 384×384px (2-inch paper at 203 DPI)
+      const PRINT_PX = 384;
+      captureCanvas.width  = PRINT_PX;
+      captureCanvas.height = PRINT_PX;
       const ctx = captureCanvas.getContext('2d');
-      ctx.drawImage(cameraFeed, sx, sy, size, size, 0, 0, size, size);
+      ctx.drawImage(cameraFeed, sx, sy, size, size, 0, 0, PRINT_PX, PRINT_PX);
 
-      paperImage.src = captureCanvas.toDataURL('image/jpeg', 0.85);
+      // Convert to grayscale via luminance
+      const imageData = ctx.getImageData(0, 0, PRINT_PX, PRINT_PX);
+      const d = imageData.data;
+      for (let i = 0; i < d.length; i += 4) {
+        const gray = Math.round(0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]);
+        d[i] = d[i + 1] = d[i + 2] = gray;
+      }
+      ctx.putImageData(imageData, 0, 0);
+
+      paperImage.src = captureCanvas.toDataURL('image/jpeg', 0.72);
       imageWrap.classList.add('visible');
       cameraBtn.classList.add('hidden');
       stopCamera();
@@ -529,6 +615,16 @@
       paperImage.src = '';
       cameraBtn.classList.remove('hidden');
     });
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function dataURLtoBlob(dataURL) {
+      const [header, data] = dataURL.split(',');
+      const mime = header.match(/:(.*?);/)[1];
+      const binary = atob(data);
+      const arr = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
+      return new Blob([arr], { type: mime });
+    }
 
     // ── Send ─────────────────────────────────────────────────────────────────
     sendBtn.addEventListener('click', async () => {
@@ -550,13 +646,54 @@
       sendBtn.disabled = true;
       showStatus('sending', 'Sending…');
 
-      const { error } = await db.from('messages').insert({ name, message });
+      // Upload image if present
+      let image_url = null;
+      if (paperImage.src && imageWrap.classList.contains('visible')) {
+        const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
+        const blob = dataURLtoBlob(paperImage.src);
+        const { error: uploadError } = await db.storage
+          .from('message-images')
+          .upload(filename, blob, { contentType: 'image/jpeg' });
+
+        if (uploadError) {
+          showStatus('error', 'Image upload failed. Please try again.');
+          console.error(uploadError);
+          sendBtn.disabled = false;
+          return;
+        }
+
+        const { data: { publicUrl } } = db.storage
+          .from('message-images')
+          .getPublicUrl(filename);
+        image_url = publicUrl;
+      }
+
+      const { error } = await db.from('messages').insert({ name, message, image_url });
 
       if (error) {
         showStatus('error', 'Something went wrong. Please try again.');
         console.error(error);
+        sendBtn.disabled = false;
       } else {
-        showStatus('success', 'Sent! Your message will print shortly.');
+        // Populate sent receipt
+        const { date } = getIST();
+        sentName.textContent = name.toUpperCase();
+        sentDate.textContent = date;
+        sentMessage.textContent = message;
+
+        if (paperImage.src && imageWrap.classList.contains('visible')) {
+          sentImage.src = paperImage.src;
+          sentImageWrap.classList.add('visible');
+        } else {
+          sentImage.src = '';
+          sentImageWrap.classList.remove('visible');
+        }
+
+        // Swap to sent view
+        inputView.style.display = 'none';
+        sentView.classList.add('visible');
+
+        // Reset form for next use
         nameInput.value = '';
         messageInput.value = '';
         messageInput.style.height = 'auto';
@@ -564,9 +701,13 @@
         paperImage.src = '';
         cameraBtn.classList.remove('hidden');
         updateHeader();
+        sendBtn.disabled = false;
       }
+    });
 
-      sendBtn.disabled = false;
+    sendAnotherBtn.addEventListener('click', () => {
+      sentView.classList.remove('visible');
+      inputView.style.display = 'contents';
     });
 
     function showStatus(type, msg) {
