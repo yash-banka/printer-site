@@ -34,15 +34,31 @@
     }
 
     /* ── Site label ──────────────────────────────────────────────────────────── */
+    .site-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      animation: fade-in 0.4s ease both;
+    }
+
+    .back-arrow {
+      font-size: 13px;
+      color: #021CA4;
+      text-decoration: none;
+      line-height: 1;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+    }
+
+    .back-arrow:hover { opacity: 1; }
+
     .site-label {
-      display: block;
       font-size: 11px;
       font-weight: 500;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: #021CA4;
-      margin-bottom: 24px;
-      animation: fade-in 0.4s ease both;
     }
 
     /* ── Two-column grid ─────────────────────────────────────────────────────── */
@@ -553,7 +569,10 @@
   <div id="inputView">
   <div class="page">
 
-    <span class="site-label">message.yashbanka.com</span>
+    <div class="site-row">
+      <a href="https://yashbanka.com" class="back-arrow">←</a>
+      <span class="site-label">message.yashbanka.com</span>
+    </div>
 
     <div class="layout">
 
@@ -731,13 +750,13 @@
 
     // ── Format datetime matching server's formatIST ───────────────────────────
     // Output: "27 Mar 2026 14:30 UTC+5:30"
+    // Format date and time separately to avoid locale-injected "at" between them.
     function formatPrintDatetime() {
       const now = new Date();
-      return new Intl.DateTimeFormat('en-GB', {
-        timeZone: 'Asia/Kolkata',
-        day: '2-digit', month: 'short', year: 'numeric',
-        hour: '2-digit', minute: '2-digit', hour12: false,
-      }).format(now).replace(',', '') + ' UTC+5:30';
+      const tz = { timeZone: 'Asia/Kolkata' };
+      const date = new Intl.DateTimeFormat('en-GB', { ...tz, day: '2-digit', month: 'short', year: 'numeric' }).format(now);
+      const time = new Intl.DateTimeFormat('en-GB', { ...tz, hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
+      return `${date} ${time} UTC+5:30`;
     }
 
     // ── Live print preview ────────────────────────────────────────────────────
